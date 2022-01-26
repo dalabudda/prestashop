@@ -37,7 +37,7 @@ class AnalyticsEnv extends Env
     public function __construct()
     {
         parent::__construct();
-        $this->setServiceUrl($_ENV['ANALYTICS_API']);
+        $this->setServiceUrl($_ENV['PHP_METRICS_API_URL']);
     }
 
     /**

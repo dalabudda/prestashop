@@ -80,11 +80,14 @@ class Ps_metrics extends Module
     /** @var string */
     public $emailSupport;
 
+    /** @var string */
+    public $ajaxMetricsController;
+
     public function __construct()
     {
         $this->name = 'ps_metrics';
         $this->tab = 'advertising_marketing';
-        $this->version = '2.4.1';
+        $this->version = '2.7.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->module_key = '697657ffe038d20741105e95a10b12d1';
@@ -93,10 +96,10 @@ class Ps_metrics extends Module
         $this->ajaxDashboardController = 'AdminAjaxDashboard';
         $this->graphqlController = 'AdminGraphql';
         $this->ajaxSettingsController = 'AdminAjaxSettings';
-        $this->metricsStatsController = 'AdminMetricsStats';
         $this->metricsSettingsController = 'AdminMetricsSettings';
-        $this->legacyStatsController = 'AdminLegacyStatsMetrics';
+        $this->metricsStatsController = 'AdminMetricsStats';
         $this->metricsUpgradeController = 'AdminMetricsUpgrade';
+        $this->ajaxMetricsController = 'AdminAjaxMetrics';
         $this->idPsAccounts = '49648';
         $this->idPsMetrics = '49583';
         $this->emailSupport = 'support-metrics@prestashop.com';
@@ -105,10 +108,9 @@ class Ps_metrics extends Module
             $this->graphqlController,
             $this->ajaxDashboardController,
             $this->ajaxSettingsController,
-            $this->metricsStatsController,
-            $this->legacyStatsController,
             $this->metricsSettingsController,
             $this->metricsUpgradeController,
+            $this->ajaxMetricsController,
         ];
         $this->moduleSubstitution = [
             'dashactivity',
@@ -141,13 +143,17 @@ class Ps_metrics extends Module
         /** @var PrestaShop\Module\Ps_metrics\Module\Install $installModule */
         $installModule = $this->getService('ps_metrics.module.install');
 
+        /** @var PrestaShop\Module\Ps_metrics\Handler\NativeStatsHandler $nativeStats */
+        $nativeStats = $this->container->getService('ps_metrics.handler.native.stats');
+
         return parent::install() &&
             $this->registerHook('displayAdminAfterHeader') &&
             $this->registerHook('actionAdminControllerSetMedia') &&
             $this->registerHook('dashboardZoneTwo') &&
             $installModule->updateModuleHookPosition('dashboardZoneTwo', 0) &&
             $installModule->setConfigurationValues() &&
-            $installModule->installTabs();
+            $installModule->installTabs() &&
+            $nativeStats->install();
     }
 
     /**
@@ -160,19 +166,22 @@ class Ps_metrics extends Module
         /** @var PrestaShop\Module\Ps_metrics\Module\Uninstall $uninstallModule */
         $uninstallModule = $this->getService('ps_metrics.module.uninstall');
 
+        /** @var PrestaShop\Module\Ps_metrics\StatsTabManager $tabManager */
+        $tabManager = $this->container->getService('ps_metrics.statstab.manager');
+
         /** @var PrestaShop\Module\Ps_metrics\Tracker\Segment $segment */
         $segment = $this->container->getService('ps_metrics.tracker.segment');
         $segment->setMessage('[MTR] Uninstall Module');
         $segment->track();
 
-        /** @var PrestaShop\Module\Ps_metrics\Module\DashboardModules $dashboardModules */
-        $dashboardModules = $this->container->getService('ps_metrics.module.dashboard.modules');
+        /** @var PrestaShop\Module\Ps_metrics\Handler\NativeStatsHandler $nativeStats */
+        $nativeStats = $this->container->getService('ps_metrics.handler.native.stats');
 
         return parent::uninstall() &&
             $uninstallModule->resetConfigurationValues() &&
             $uninstallModule->uninstallTabs() &&
             $uninstallModule->unsubscribePsEssentials() &&
-            $dashboardModules->enableModules();
+            $nativeStats->uninstall();
     }
 
     /**
@@ -222,44 +231,6 @@ class Ps_metrics extends Module
     }
 
     /**
-     * hook Backoffice top pages
-     *
-     * @return string|false
-     */
-    public function hookDisplayAdminAfterHeader()
-    {
-        /** @var PrestaShop\Module\Ps_metrics\Context\PrestaShopContext $context */
-        $context = $this->container->getService('ps_metrics.context.prestashop');
-
-        if (
-            Module::isEnabled($this->name) &&
-            $context->getControllerName() === 'AdminStats'
-        ) {
-            return $this->display(__FILE__, '/views/templates/hook/HookDashboardZoneTwo.tpl');
-        }
-
-        return false;
-    }
-
-    /**
-     * Hook set media for old stats pages for loading dashboard box
-     *
-     * @return void
-     */
-    public function hookActionAdminControllerSetMedia()
-    {
-        /** @var PrestaShop\Module\Ps_metrics\Context\PrestaShopContext $context */
-        $context = $this->container->getService('ps_metrics.context.prestashop');
-
-        if (
-            Module::isEnabled($this->name) &&
-            $context->getControllerName() === 'AdminStats'
-        ) {
-            $this->loadDashboardAssets();
-        }
-    }
-
-    /**
      * Load the configuration form.
      *
      * @return string
@@ -270,23 +241,7 @@ class Ps_metrics extends Module
         /** @var PrestaShop\Module\Ps_metrics\Adapter\LinkAdapter $link */
         $link = $this->container->getService('ps_metrics.adapter.link');
 
-        $accountsParams = [];
-        if (
-            \Tools::getIsset('adminToken') &&
-            !empty(\Tools::getValue('adminToken')) &&
-            \Tools::getIsset('emailVerified') &&
-            !empty(\Tools::getValue('emailVerified')) &&
-            \Tools::getIsset('email') &&
-            !empty(\Tools::getValue('email'))
-        ) {
-            $accountsParams = [
-                'adminToken' => \Tools::getValue('adminToken'),
-                'emailVerified' => \Tools::getValue('emailVerified'),
-                'email' => \Tools::getValue('email'),
-            ];
-        }
-
-        \Tools::redirectAdmin($link->getAdminLink($this->metricsSettingsController, true, [], $accountsParams));
+        \Tools::redirectAdmin($link->getAdminLink($this->metricsSettingsController));
     }
 
     /**

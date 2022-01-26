@@ -55,7 +55,7 @@ Disallow: /*controller=search
 Disallow: /*controller=statistics
 Disallow: /*controller=attachment
 Disallow: /*controller=guest-tracking
-# Directories for localhost:81
+# Directories for 94.40.79.249
 Disallow: /prestashop/app/
 Disallow: /prestashop/cache/
 Disallow: /prestashop/classes/

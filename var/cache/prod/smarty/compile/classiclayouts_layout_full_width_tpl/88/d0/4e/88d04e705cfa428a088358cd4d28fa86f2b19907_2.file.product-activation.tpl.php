@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.39, created on 2021-11-23 14:15:54
+/* Smarty version 3.1.39, created on 2022-01-25 23:36:53
   from 'C:\xampp\htdocs\prestashop\themes\classic\templates\catalog\_partials\product-activation.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.39',
-  'unifunc' => 'content_619ce98a31ef37_84036184',
+  'unifunc' => 'content_61f07b85702ae8_56026360',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '88d04e705cfa428a088358cd4d28fa86f2b19907' => 
     array (
       0 => 'C:\\xampp\\htdocs\\prestashop\\themes\\classic\\templates\\catalog\\_partials\\product-activation.tpl',
-      1 => 1637668028,
+      1 => 1638864897,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_619ce98a31ef37_84036184 (Smarty_Internal_Template $_smarty_tpl) {
+function content_61f07b85702ae8_56026360 (Smarty_Internal_Template $_smarty_tpl) {
 if ($_smarty_tpl->tpl_vars['page']->value['admin_notifications']) {?>
   <div class="alert alert-warning row" role="alert">
     <div class="container">

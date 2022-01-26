@@ -21,9 +21,7 @@
 
 use PrestaShop\Module\Ps_metrics\Adapter\LinkAdapter;
 use PrestaShop\Module\Ps_metrics\Api\AnalyticsApi;
-use PrestaShop\Module\Ps_metrics\Helper\ModuleHelper;
 use PrestaShop\Module\Ps_metrics\Helper\ToolsHelper;
-use PrestaShop\Module\Ps_metrics\Module\DashboardModules;
 use PrestaShop\Module\Ps_metrics\Repository\ConfigurationRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
@@ -75,10 +73,6 @@ class AdminOauthCallbackController extends ModuleAdminController
         if (false === $this->isGoogleAuthenticationDone()) {
             $configurationRepository->saveActionGoogleLinked(false);
         }
-
-        /** @var DashboardModules $dashboardModule */
-        $dashboardModule = $this->module->getService('ps_metrics.module.dashboard.modules');
-        $dashboardModule->disableModules();
 
         $toolsHelper->redirectAdmin(
             $linkAdapter->getAdminLink(
@@ -166,44 +160,5 @@ class AdminOauthCallbackController extends ModuleAdminController
         return base64_encode(
             '{"redirectUri":"' . $shopRedirectUri . '","shopId":"' . $shopId . '"}'
         );
-    }
-
-    /**
-     * Get the module enabled status
-     *
-     * @return string|false
-     */
-    private function getModuleListState()
-    {
-        $moduleListState = [];
-
-        /** @var ModuleHelper $moduleHelper */
-        $moduleHelper = $this->module->getService('ps_metrics.helper.module');
-
-        foreach ($this->module->moduleSubstitution as $moduleName) {
-            $isModuleEnabled = $moduleHelper->isEnabled($moduleName);
-            $moduleListState[$moduleName] = $isModuleEnabled;
-        }
-
-        return json_encode($moduleListState);
-    }
-
-    /**
-     * Disable dashboard module list moduleSubstitution when the Google Account is linked
-     *
-     * @return void
-     */
-    private function disableDashboardModuleList()
-    {
-        /** @var ModuleHelper $moduleHelper */
-        $moduleHelper = $this->module->getService('ps_metrics.helper.module');
-
-        foreach ($this->module->moduleSubstitution as $moduleName) {
-            $module = $moduleHelper->getInstanceByName($moduleName);
-            // $module returns false if module doesn't exist
-            if (false !== $module) {
-                $module->disable();
-            }
-        }
     }
 }

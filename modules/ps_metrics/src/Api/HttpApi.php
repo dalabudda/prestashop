@@ -85,7 +85,7 @@ class HttpApi
      */
     public function getPlansDetails($isoCode)
     {
-        $this->client->setUrl($_ENV['ANALYTICS_API'] . '/plans/description/' . $isoCode);
+        $this->client->setUrl($_ENV['PHP_METRICS_API_URL'] . '/plans/description/' . $isoCode);
         $plans = $this->client->get();
 
         return (!empty($plans['error'] || empty($plans['body']))) ? null : $plans['body']['plans_description'];

@@ -96,6 +96,8 @@ type Product {
   name: String!
   quantity: Float!
   amount: Float!
+  stock: Float!
+  position: Float!
 }
 
 type ProductPeriod {
@@ -118,7 +120,11 @@ type Query {
   sessionsGroupByDate(Granularity: String!, InputData: InputData!): GoogleDate!
   engagementRate(InputData: InputData!): Google!
   sessionsGroupByHour(InputData: InputData!): GoogleDate!
-  sessionsGroupByCategory(IsoCode: String!, Limit: Float!, InputData: InputData!): GoogleCategories!
+  sessionsGroupByCategory(
+    IsoCode: String!
+    Limit: Float!
+    InputData: InputData!
+  ): GoogleCategories!
   revenueGross(InputData: InputData!): Revenue!
   revenueGrossGroupByDate(InputData: InputData!): RevenueDate!
   revenueGrossByCategories(IsoCode: String!, InputData: InputData!): [Revenue!]!
@@ -132,7 +138,11 @@ type Query {
   orderAverage(InputData: InputData!): Order!
   orderAverageGroupByDate(InputData: InputData!): OrderDate!
   conversionRate(InputData: InputData!): Order!
-  productTopSeller(IsoCode: String!, Limit: Float!, InputData: InputData!): ProductPeriod!
+  productTopSeller(
+    IsoCode: String!
+    Limit: Float!
+    InputData: InputData!
+  ): ProductPeriod!
   cartAbandonedAverage(InputData: InputData!): Cart!
   tipscards(category: String = "", language: String = "en"): [TipsCard!]!
 }

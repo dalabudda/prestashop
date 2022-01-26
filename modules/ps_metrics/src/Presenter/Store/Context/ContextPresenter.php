@@ -26,7 +26,6 @@ use PrestaShop\Module\Ps_metrics\Api\HttpApi;
 use PrestaShop\Module\Ps_metrics\Context\PrestaShopContext;
 use PrestaShop\Module\Ps_metrics\Helper\DbHelper;
 use PrestaShop\Module\Ps_metrics\Helper\ToolsHelper;
-use PrestaShop\Module\Ps_metrics\Module\DashboardModules;
 use PrestaShop\Module\Ps_metrics\Presenter\PresenterInterface;
 use PrestaShop\Module\Ps_metrics\Provider\AnalyticsAccountsListProvider;
 use PrestaShop\Module\Ps_metrics\Provider\ShopsProvider;
@@ -63,11 +62,6 @@ class ContextPresenter implements PresenterInterface
     private $shopsProvider;
 
     /**
-     * @var DashboardModules;
-     */
-    private $dashboardModules;
-
-    /**
      * @var AnalyticsAccountsListProvider
      */
     private $analyticsAccountsListProvider;
@@ -99,7 +93,6 @@ class ContextPresenter implements PresenterInterface
         LinkAdapter $linkAdapter,
         ConfigurationRepository $configurationRepository,
         ShopsProvider $shopsProvider,
-        DashboardModules $dashboardModules,
         AnalyticsAccountsListProvider $analyticsAccountsListProvider,
         HttpApi $httpApi,
         ToolsHelper $toolsHelper,
@@ -111,7 +104,6 @@ class ContextPresenter implements PresenterInterface
         $this->linkAdapter = $linkAdapter;
         $this->configurationRepository = $configurationRepository;
         $this->shopsProvider = $shopsProvider;
-        $this->dashboardModules = $dashboardModules;
         $this->analyticsAccountsListProvider = $analyticsAccountsListProvider;
         $this->httpApi = $httpApi;
         $this->toolsHelper = $toolsHelper;
@@ -128,11 +120,13 @@ class ContextPresenter implements PresenterInterface
         $currentShop = $this->shopsProvider->getShopUrl($this->context->getShopId());
         try {
             $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+            $psAccountsToken = $psAccountsService->getOrRefreshToken();
             $shopUuidV4 = $psAccountsService->getShopUuidV4();
             $email = $psAccountsService->getEmail();
             $emailIsValidated = $psAccountsService->isEmailValidated();
             $accountsUrl = $psAccountsService->getAdminAjaxUrl();
         } catch (InstallerException $e) {
+            $psAccountsToken = '';
             $shopUuidV4 = '';
             $email = '';
             $emailIsValidated = false;
@@ -148,6 +142,12 @@ class ContextPresenter implements PresenterInterface
             $newVersionAvailable = true;
         }
 
+        /** @var \Module $psAccountModule */
+        $psAccountModule = \Module::getInstanceByName('ps_accounts');
+
+        /** @var \Module $psEventBusModule */
+        $psEventBusModule = \Module::getInstanceByName('ps_eventbus');
+
         return [
             'context' => [
                 'app' => $this->getCurrentVueApp(),
@@ -162,10 +162,13 @@ class ContextPresenter implements PresenterInterface
                 ],
                 'googleAccountsList' => $this->analyticsAccountsListProvider->getAccountsList(),
                 'googleAccount' => $this->analyticsAccountsListProvider->getSelectedAccount(),
-                'modulesIsEnabled' => $this->dashboardModules->modulesIsEnabled(),
-                'version_ps' => _PS_VERSION_,
-                'version_module' => $this->module->version,
+                'prestashopVersion' => _PS_VERSION_,
+                'moduleVersion' => $this->module->version,
                 'moduleName' => $this->module->name,
+                'phpVersion' => phpversion(),
+                'psAccountVersion' => \Validate::isLoadedObject($psAccountModule) ? $psAccountModule->version : '',
+                'psAccountToken' => $psAccountsToken,
+                'psEventBusVersion' => \Validate::isLoadedObject($psEventBusModule) ? $psEventBusModule->version : '',
                 'newVersionAvailable' => $newVersionAvailable,
                 'moduleUpgraded' => ($this->toolsHelper->getValue('upgraded', false)) ? true : false,
                 'isShop17' => version_compare(_PS_VERSION_, '1.7.3.0', '>='),
@@ -181,6 +184,7 @@ class ContextPresenter implements PresenterInterface
                     'upgrade' => $this->linkAdapter->getAdminLink($this->module->metricsUpgradeController),
                     'faq' => $this->linkAdapter->getAdminLink($this->module->metricsSettingsController) . '#/help',
                     'plans' => $this->linkAdapter->getAdminLink($this->module->metricsSettingsController) . '#/plans',
+                    'metricsAjax' => $this->linkAdapter->getAdminLink($this->module->ajaxMetricsController),
                 ],
                 'i18n' => [
                     'isoCode' => $this->context->getLanguageIsoCode(),
@@ -199,6 +203,9 @@ class ContextPresenter implements PresenterInterface
                 'productTourAdvancedDoneDate' => $this->getProductTourDate('PS_METRICS_PRODUCT_TOUR_ADVANCED'),
                 'isLegacyStatsPage' => $this->checkIfPageIsLegacyStats(),
                 'maxUserConnections' => $this->dbHelper->getMaxUserConnections(),
+                'employee' => [
+                    'email' => $this->context->getEmployeeEmail(),
+                ],
             ],
         ];
     }

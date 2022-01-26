@@ -24,6 +24,7 @@
 <div id="settingsApp"></div>
 <script src="{$pathSettingsVendor|escape:'htmlall':'UTF-8'}"></script>
 <script src="{$pathSettingsApp|escape:'htmlall':'UTF-8'}"></script>
+<script src="{$urlAccountsVueCdn|escape:'htmlall':'UTF-8'}" type="text/javascript"></script>
 <script src="https://js.chargebee.com/v2/chargebee.js"></script>
 
 <style>

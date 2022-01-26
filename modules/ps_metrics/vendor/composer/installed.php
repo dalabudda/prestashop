@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
+        'pretty_version' => 'v2.7.0',
+        'version' => '2.7.0.0',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '934aaa5415b7179dbb1e9e6f8ad3b0a10a088fdb',
+        'reference' => '58783a9279869e27a26d2491c4022126756bc641',
         'name' => 'prestashop/ps_metrics',
         'dev' => false,
     ),
@@ -98,12 +98,12 @@
             'dev_requirement' => false,
         ),
         'prestashop/ps_metrics' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
+            'pretty_version' => 'v2.7.0',
+            'version' => '2.7.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '934aaa5415b7179dbb1e9e6f8ad3b0a10a088fdb',
+            'reference' => '58783a9279869e27a26d2491c4022126756bc641',
             'dev_requirement' => false,
         ),
         'psr/cache' => array(

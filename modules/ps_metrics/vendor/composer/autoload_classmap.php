@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AdminAjaxDashboardController' => $baseDir . '/controllers/admin/AdminAjaxDashboardController.php',
+    'AdminAjaxMetricsController' => $baseDir . '/controllers/admin/AdminAjaxMetricsController.php',
     'AdminAjaxSettingsController' => $baseDir . '/controllers/admin/AdminAjaxSettingsController.php',
     'AdminGraphqlController' => $baseDir . '/controllers/admin/AdminGraphqlController.php',
     'AdminLegacyStatsMetricsController' => $baseDir . '/controllers/admin/AdminLegacyStatsMetricsController.php',
@@ -383,6 +384,7 @@ return array(
     'PrestaShop\\Module\\Ps_metrics\\GraphQL\\DataLoaders\\UniqueUsersDataLoaders' => $baseDir . '/src/GraphQL/DataLoaders/UniqueUsersDataLoaders.php',
     'PrestaShop\\Module\\Ps_metrics\\GraphQL\\DataLoaders\\revenueGrossGroupByDistributionDataLoaders' => $baseDir . '/src/GraphQL/DataLoaders/RevenueGrossGroupByDistributionDataLoaders.php',
     'PrestaShop\\Module\\Ps_metrics\\Handler\\GuzzleApiResponseExceptionHandler' => $baseDir . '/src/Handler/GuzzleApiResponseExceptionHandler.php',
+    'PrestaShop\\Module\\Ps_metrics\\Handler\\NativeStatsHandler' => $baseDir . '/src/Handler/NativeStatsHandler.php',
     'PrestaShop\\Module\\Ps_metrics\\Helper\\ApiHelper' => $baseDir . '/src/Helper/ApiHelper.php',
     'PrestaShop\\Module\\Ps_metrics\\Helper\\DataHelper' => $baseDir . '/src/Helper/DataHelper.php',
     'PrestaShop\\Module\\Ps_metrics\\Helper\\DbHelper' => $baseDir . '/src/Helper/DbHelper.php',
@@ -407,7 +409,6 @@ return array(
     'PrestaShop\\Module\\Ps_metrics\\Middleware\\Middleware' => $baseDir . '/src/Middleware/Middleware.php',
     'PrestaShop\\Module\\Ps_metrics\\Middleware\\ResponseMiddleware' => $baseDir . '/src/Middleware/ResponseMiddleware.php',
     'PrestaShop\\Module\\Ps_metrics\\Middleware\\SentryMiddleware' => $baseDir . '/src/Middleware/SentryMiddleware.php',
-    'PrestaShop\\Module\\Ps_metrics\\Module\\DashboardModules' => $baseDir . '/src/Module/DashboardModules.php',
     'PrestaShop\\Module\\Ps_metrics\\Module\\GAInstaller' => $baseDir . '/src/Module/GAInstaller.php',
     'PrestaShop\\Module\\Ps_metrics\\Module\\Install' => $baseDir . '/src/Module/Install.php',
     'PrestaShop\\Module\\Ps_metrics\\Module\\Uninstall' => $baseDir . '/src/Module/Uninstall.php',
@@ -423,6 +424,7 @@ return array(
     'PrestaShop\\Module\\Ps_metrics\\Repository\\HookModuleRepository' => $baseDir . '/src/Repository/HookModuleRepository.php',
     'PrestaShop\\Module\\Ps_metrics\\Repository\\OrdersRepository' => $baseDir . '/src/Repository/OrdersRepository.php',
     'PrestaShop\\Module\\Ps_metrics\\Repository\\PaymentRepository' => $baseDir . '/src/Repository/PaymentRepository.php',
+    'PrestaShop\\Module\\Ps_metrics\\StatsTabManager' => $baseDir . '/src/StatsTabManager.php',
     'PrestaShop\\Module\\Ps_metrics\\Tracker\\Segment' => $baseDir . '/src/Tracker/Segment.php',
     'PrestaShop\\Module\\Ps_metrics\\Tracker\\TrackerInterface' => $baseDir . '/src/Tracker/TrackerInterface.php',
     'PrestaShop\\Module\\Ps_metrics\\Translation\\DashboardTranslation' => $baseDir . '/src/Translation/DashboardTranslation.php',

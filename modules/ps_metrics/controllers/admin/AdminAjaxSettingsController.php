@@ -24,7 +24,6 @@ use PrestaShop\Module\Ps_metrics\Cache\DataCache;
 use PrestaShop\Module\Ps_metrics\Context\PrestaShopContext;
 use PrestaShop\Module\Ps_metrics\Helper\JsonHelper;
 use PrestaShop\Module\Ps_metrics\Helper\ToolsHelper;
-use PrestaShop\Module\Ps_metrics\Module\DashboardModules;
 use PrestaShop\Module\Ps_metrics\Module\Uninstall;
 use PrestaShop\Module\Ps_metrics\Provider\AnalyticsAccountsListProvider;
 use PrestaShop\Module\Ps_metrics\Provider\GoogleTagProvider;
@@ -170,13 +169,30 @@ class AdminAjaxSettingsController extends ModuleAdminController
             ]));
         }
 
-        /** @var DashboardModules $dashboardModule */
-        $dashboardModule = $this->module->getService('ps_metrics.module.dashboard.modules');
-        $dashboardModule->enableModules();
-
         $this->ajaxDie($jsonHelper->jsonEncode([
             'success' => true,
             'googleLinked' => false,
+        ]));
+    }
+
+    /**
+     * Toggle dashboard modules
+     *
+     * @return void
+     */
+    public function ajaxProcessToggleDashboardModules()
+    {
+        /** @var PrestaShop\Module\Ps_metrics\Handler\NativeStatsHandler $nativeStats */
+        $nativeStats = $this->module->getService('ps_metrics.handler.native.stats');
+
+        $nativeStats->toggleNativeStats();
+
+        /** @var JsonHelper $jsonHelper */
+        $jsonHelper = $this->module->getService('ps_metrics.helper.json');
+
+        $this->ajaxDie($jsonHelper->jsonEncode([
+            'success' => true,
+            'modulesIsEnabled' => $nativeStats->nativeStatsIsEnabled(),
         ]));
     }
 

@@ -29,7 +29,6 @@ use PrestaShop\Module\Ps_metrics\Kpi\OrdersKpi;
 use PrestaShop\Module\Ps_metrics\Kpi\RevenuesKpi;
 use PrestaShop\Module\Ps_metrics\Kpi\TotalKpi;
 use PrestaShop\Module\Ps_metrics\Kpi\VisitsKpi;
-use PrestaShop\Module\Ps_metrics\Module\DashboardModules;
 use PrestaShop\Module\Ps_metrics\Validation\RetrieveData;
 
 class AdminAjaxDashboardController extends ModuleAdminController
@@ -145,30 +144,6 @@ class AdminAjaxDashboardController extends ModuleAdminController
         $tipsCardsData = $this->module->getService('ps_metrics.data.tipscards');
         $this->ajaxDie($jsonHelper->jsonEncode([
             'tipsCards' => $tipsCardsData->getAll(),
-        ]));
-    }
-
-    /**
-     * Toggle dashboard modules
-     *
-     * @return void
-     */
-    public function ajaxProcessToggleDashboardModules()
-    {
-        /** @var DashboardModules $dashboardModule */
-        $dashboardModule = $this->module->getService('ps_metrics.module.dashboard.modules');
-
-        if ($dashboardModule->modulesIsEnabled()) {
-            $dashboardModule->disableModules();
-        } else {
-            $dashboardModule->enableModules();
-        }
-
-        /** @var JsonHelper $jsonHelper */
-        $jsonHelper = $this->module->getService('ps_metrics.helper.json');
-
-        $this->ajaxDie($jsonHelper->jsonEncode([
-            'success' => true,
         ]));
     }
 

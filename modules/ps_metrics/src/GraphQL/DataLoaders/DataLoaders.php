@@ -196,13 +196,13 @@ class DataLoaders
             'productTopSeller' => new DataLoader(function ($args) use ($promiseAdapter, $module) {
                 $cache_name = $this->getCacheName('productTopSeller', $args);
                 $output = $this->dataCache->get($cache_name);
-                if (!$output) {
-                    /** @var ProductTopSellerDataLoaders $dataLoaders */
-                    $dataLoaders = $module->getService('ps_metrics.graphql.dataloaders.producttopseller');
+                //if (!$output) {
+                /** @var ProductTopSellerDataLoaders $dataLoaders */
+                $dataLoaders = $module->getService('ps_metrics.graphql.dataloaders.producttopseller');
 
-                    $output = $dataLoaders->get($args);
-                    $this->dataCache->set($output, $cache_name);
-                }
+                $output = $dataLoaders->get($args);
+                $this->dataCache->set($output, $cache_name);
+                //}
 
                 return $promiseAdapter->createAll([$output]);
             }, $promiseAdapter),

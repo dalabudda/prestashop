@@ -23,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module Version 2.0.0
+ * Update main function for module Version 2.1.2
  *
  * @param Ps_metrics $module
  *

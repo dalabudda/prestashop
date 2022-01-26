@@ -140,6 +140,14 @@ class SettingsTranslation
                             'message' => $this->module->l('PrestaShop Metrics is now fully configured!', 'SettingsTranslation'),
                             'link' => $this->module->l('Find all your reliable data on your dashboard.', 'SettingsTranslation'),
                         ],
+                        'disableDashboardModules' => [
+                            'text' => $this->module->l('If you want to disable the native analytics modules', 'DashboardTranslation'),
+                            'cta' => $this->module->l('Click here', 'DashboardTranslation'),
+                        ],
+                        'enableDashboardModules' => [
+                            'text' => $this->module->l('if you want to reactivate the native analytics modules', 'DashboardTranslation'),
+                            'cta' => $this->module->l('Click here', 'DashboardTranslation'),
+                        ],
                     ],
                 ],
             ],

@@ -26,7 +26,6 @@ use PrestaShop\Module\Ps_metrics\Api\AnalyticsApi;
 use PrestaShop\Module\Ps_metrics\Repository\ConfigurationRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use Ps_metrics;
-use Tab;
 use Validate;
 
 class Uninstall
@@ -77,7 +76,8 @@ class Uninstall
      */
     public function resetConfigurationValues()
     {
-        return $this->configurationRepository->saveActionGoogleLinked(false);
+        return $this->configurationRepository->saveActionGoogleLinked(false) &&
+            $this->configurationRepository->saveFirstTimeOnboarded(false);
     }
 
     /**
@@ -87,11 +87,16 @@ class Uninstall
      */
     public function uninstallTabs()
     {
-        $uninstallTabCompleted = true;
+        $query = 'SELECT id_tab FROM ' . _DB_PREFIX_ . 'tab WHERE module = "' . $this->module->name . '"';
+        $result = \Db::getInstance()->executeS($query);
 
-        foreach ($this->module->controllers as $controllerName) {
-            $idTab = (int) Tab::getIdFromClassName($controllerName);
-            $tab = new Tab($idTab);
+        if (false === $result || !is_array($result)) {
+            return true;
+        }
+
+        $uninstallTabCompleted = true;
+        foreach ($result as $tab) {
+            $tab = new \Tab($tab['id_tab']);
 
             if (Validate::isLoadedObject($tab)) {
                 $uninstallTabCompleted = $uninstallTabCompleted && $tab->delete();
@@ -123,6 +128,10 @@ class Uninstall
      */
     private function isOnboardedWithAccountAndGoogle()
     {
+        if (false === \Module::isInstalled('ps_accounts')) {
+            return false;
+        }
+
         $shopUuidV4 = $this->psAccountsFacade->getPsAccountsService()->getShopUuidV4();
 
         if (

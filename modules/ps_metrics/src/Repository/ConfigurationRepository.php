@@ -26,6 +26,7 @@ use PrestaShop\Module\Ps_metrics\Context\PrestaShopContext;
 
 class ConfigurationRepository
 {
+    const PS_METRICS_FIRST_TIME_ONBOARDED = 'PS_METRICS_FIRST_TIME_ONBOARDED';
     const ACCOUNT_MODULES_STATES = 'PS_METRICS_MODULES_STATES';
     const ACCOUNT_LINKED = 'PS_METRICS_ACCOUNT_LINKED';
     const ACCOUNT_GOOGLETAG_LINKED = 'PS_METRICS_GOOGLETAG_LINKED';
@@ -45,6 +46,39 @@ class ConfigurationRepository
     public function __construct(PrestaShopContext $prestashopContext)
     {
         $this->shopId = (int) $prestashopContext->getShopId();
+    }
+
+    /**
+     * Get if the user has already onboarded the module
+     *
+     * @return bool
+     */
+    public function getFirstTimeOnboarded()
+    {
+        return (bool) Configuration::get(
+            self::PS_METRICS_FIRST_TIME_ONBOARDED,
+            null,
+            null,
+            $this->shopId
+        );
+    }
+
+    /**
+     * Register the first time a user has onboarded the module
+     *
+     * @param bool $bool
+     *
+     * @return bool
+     */
+    public function saveFirstTimeOnboarded($bool)
+    {
+        return Configuration::updateValue(
+            self::PS_METRICS_FIRST_TIME_ONBOARDED,
+            $bool,
+            false,
+            null,
+            $this->shopId
+        );
     }
 
     /**
@@ -137,23 +171,29 @@ class ConfigurationRepository
      */
     public function saveDashboardModulesToToggle($moduleList = [])
     {
+        if (count($moduleList) === 0) {
+            $moduleList = '';
+        } else {
+            $moduleList = json_encode($moduleList);
+        }
+
         return Configuration::updateValue(
             self::ACCOUNT_MODULES_STATES,
-            json_encode($moduleList)
+            $moduleList
         );
     }
 
     /**
      * getModuleListState
      *
-     * @return array
+     * @return array|string
      */
     public function getDashboardModulesToToggleAsArray()
     {
         $modules = $this->getDashboardModulesToToggle();
 
-        if (false === $modules) {
-            return [];
+        if (false === $modules || '' === $modules) {
+            return '';
         }
 
         return json_decode($modules);
@@ -167,7 +207,7 @@ class ConfigurationRepository
     private function getDashboardModulesToToggle()
     {
         return Configuration::get(
-            'PS_SHOP_DOMAIN',
+            self::ACCOUNT_MODULES_STATES,
             null,
             null,
             $this->shopId
